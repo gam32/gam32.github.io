@@ -1,0 +1,15 @@
+window.mcwidget = {
+  appId: '532160876956612',
+  pageId: '734216126661257',
+  widgets: [{"widget_id":2834159,"page_id":734216126661257,"widget_type":"modal","status":"active","name":"Russ Popup","data":{"main":{"title":"Viktig: Meld deg p\u00e5 v\u00e5r Facebook Messenger og f\u00e5 tilsendt russeinfo, rabatter og fordeler.","desc":"&nbsp;Trykk \"Send to Messenger\" s\u00e5 sender vi deg oppdateringer og fordeler direkte.","showAgain":["never","14"],"showAgainIfClosed":["days","3"],"whenDisplay":["delay","60"]},"submitted":{"title":"Nice! Vi connected","desc":"Vi sender deg n\u00e5 en velkomstmelding i Messenger","ctaText":"G\u00e5 til din Messenger"},"setup":{"urlWhitelist":""}}}],
+  locale: 'en_US',
+  defaultSize: 0};
+(function(d, s, id){
+var host = 'manychat.com/107089';
+
+var js, fjs = d.getElementsByTagName(s)[0];
+if (d.getElementById(id)) { return; }
+js = d.createElement(s); js.id = id;
+js.src = '//' + host + '/assets/js/widget.js?' + (Math.round(+new Date/1000*600));
+fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'mcwidget-core'));

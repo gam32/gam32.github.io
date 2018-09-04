@@ -1,0 +1,28 @@
+@charset "utf-8";
+/* CSS Document */
+
+.terminliste a:hover{
+	cursor: pointer;
+}
+
+table, td, th{
+    border: 1px solid black;
+	border-collapse: collapse;
+	padding: 0.5em;
+	background-color: white;
+	}
+tr:hover td {
+	background-color: #938F8F;
+	cursor: pointer;
+}
+
+.terminliste{
+	margin-left: 4.5em;
+}
+.column_35{
+	float: left;
+	width: 35%;
+	padding-left: 3em;
+}
+
+

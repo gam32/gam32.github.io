@@ -1,0 +1,942 @@
+(function ($) {
+
+    $(window).on('load', function () {
+        if ($('#postal_code').val() === 'Nummer') {
+            $('#postal_city').hide();
+        }
+    });
+    $(window).on('load resize', function () {
+        smartFooter();
+        $('.friend-image-box').height($(".friend-image-box").width());
+
+        var loginHeight = $(window).height() - $('.navbar-default').height() - $('.navbar-fixed-bottom').height();
+        $('.wrapper.account-login').height(loginHeight);
+        $('.wrapper.account-login').backstretch('/background-big.jpg');
+    });
+
+    function showFeed() {
+        $('.profile .profile-history .feed-container:lt(8)').show();
+        $('.profile .profile-history .feed-container').not(':lt(8)').hide();
+        var counter = $('.profile .profile-history .feed-container').length;
+        var shown = 8;
+        $('#loadMore').click(function () {
+            shown = $('.profile .profile-history .feed-container:visible').size() + 8;
+            if (shown < counter) {
+                $('.profile-history .feed-container:lt(' + shown + ')').show();
+            }
+            else {
+                $('.profile .profile-history .feed-container:lt(' + counter + ')').show();
+                $('#loadMore').hide();
+            }
+        });
+
+        if (counter <= 8) {
+            $('#loadMore').hide();
+        }
+    }
+
+
+    function messageAnimation() {
+        var container = $('.success');
+        container.hide();
+        setTimeout(function () {
+            container.slideDown(300);
+            setTimeout(function () {
+                container.slideUp(300);
+            }, 8000);
+        }, 500);
+    }
+
+    function optionalMessageAnimation(container) {
+        var container = $(container);
+        container.hide();
+        setTimeout(function () {
+            container.slideDown(300);
+            setTimeout(function () {
+                container.slideUp(300);
+            }, 8000);
+        }, 500);
+    }
+
+    function smartFooter() {
+        var checkHeight = $(window).height();
+        var footer = $('.community-footer');
+        var wrapper = $('.viewport-outer').height();
+        if (wrapper < checkHeight) {
+            footer.addClass('navbar-fixed-bottom');
+            $('body').addClass('smart-footer-active');
+        }
+        else {
+            footer.removeClass('navbar-fixed-bottom');
+            $('body').removeClass('smart-footer-active');
+        }
+    }
+
+    function lightbox() {
+        var popit = $('.pop-this img').attr('src');
+        $('.pop-this').magnificPopup({
+            type: 'image',
+            items: {
+                src: popit
+            }
+        });
+        var cover_pop = $('.cover_pop img').attr('src');
+        $('.cover_pop').magnificPopup({
+            type: 'image',
+            items: {
+                src: cover_pop
+            }
+        });
+
+    }
+
+
+    function readURL(input) {
+
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                $('#previewimage img').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function eventBackstretch() {
+        $('.event-list-cover').each(function () {
+            $(this).find('img').hide();
+            var imgSRC = $(this).find('img').attr('src');
+            $(this).backstretch(imgSRC);
+        });
+    }
+
+    function salesForm() {
+
+        $('.members').each(function () {
+            var a = $(this);
+            var b = a.find('.dropdown ul li').size();
+            var c = a.find('.dropdown');
+            if (b < 1) {
+                c.parent().append('<span style="color:#aaa;">Ingen notater</span>');
+                c.hide();
+            }
+            else {
+                c.find('span.count-notes').append('(' + b + ')');
+            }
+        });
+        $('.h-legend').tooltip();
+        var checked = $('.school-checks').find('input:checked');
+        checked.parent().addClass('active');
+        $('.add-member-container').hide();
+
+        $('.add-new').on('click', function () {
+            var getTr = $(this).parent().parent().next();
+            while (getTr.hasClass('members')) {
+                getTr = getTr.next();
+            }
+            getTr.fadeToggle(500);
+            $(this).find('i').toggleClass('fa-minus');
+        });
+    }
+
+
+    window.TooltipHandler = {
+
+        runMobile: false,
+
+        handleBiggerThanMobile: function () {
+            if (!this.runMobile) {
+                $('.wrap a').tooltip({
+                    delay: {show: 0, hide: 0},
+                    animation: 0,
+                    placement: 'bottom',
+                    template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>'
+                });
+            }
+        },
+
+        handleMobile: function () {
+            if (this.runMobile) {
+                $('.wrap a').tooltip({
+                    delay: {show: 0, hide: 0},
+                    animation: 0,
+                    placement: 'bottom',
+                    trigger: 'manual',
+                    template: '<div class="tooltip" role="tooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div><div class="button-container"><a href="#" class="btn btn-black btn-sm">Gå til profil</a></div></div>'
+                });
+            }
+        },
+
+        handleClickEvents: function () {
+            var that = this;
+
+            $('.list.user.image li a img').off().on('click', function (event) {
+                event.preventDefault();
+                if ($(event.target).parent().parent().find('.tooltip').length) {
+                    that.hideTooltips();
+                } else {
+                    that.showTooltip(event);
+                }
+            });
+
+            $(document).click(function (event) {
+                if (!$(event.target).closest('.list.user.image li a img').length) {
+                    that.hideTooltips();
+                    return;
+                }
+            });
+        },
+
+        showTooltip: function (event) {
+            var link = $(event.target).parent().attr('href');
+            this.hideTooltips();
+            $(event.target).parent().tooltip('show');
+            $(event.target).parent().parent().find('.tooltip .button-container a').attr('href', link);
+        },
+
+        hideTooltips: function () {
+            $('.list.user.image li a').tooltip('hide');
+        },
+
+        determineHandler: function () {
+            $('.wrap a').tooltip('destroy');
+            $('.list.user.image li a img').off();
+
+            if ($(window).width() > 752) {
+                this.runMobile = false;
+                this.handleBiggerThanMobile();
+            } else {
+                this.runMobile = true;
+                this.handleMobile();
+                this.handleClickEvents();
+            }
+        },
+
+        run: function () {
+            var that = this;
+            this.determineHandler();
+
+            $(window).on('resize', function () {
+                that.determineHandler();
+            });
+        }
+    }
+
+
+    $(document).ready(function () {
+
+        /***** Admin Post Article *****/
+        // PREVIEW:
+        $('#article-preview').on('click', function () {
+            var article_url = $('#article-url').val();
+            $('.message').hide();
+            $('#article-preview').val('Working...');
+            $('#preview-fieldset').attr("disabled", "disabled");
+            $('#article-title').val('');
+            $('#article-description').val('');
+            $.ajax({
+                url: endpointValue+'scraper',
+                method: 'POST',
+                data: { url: article_url }
+            }).done(function(res) {
+                $('#article-preview').val('Preview');
+                $('#article-title').val(res.title);
+                $('#article-description').val(res.description);
+                $('#image-preview').html('<img src="'+res.image+'" style="width:100%;"/>');
+                $('#preview-fieldset').removeAttr("disabled");
+            }).fail(function(res) {
+                var message = 'Error: ';
+                res.responseJSON.each(function(value){ message += "<br>- "+value; });
+                $('#article-preview').val('Preview');
+                $('.message.warn.preview .wrap').html(message);
+                $('.message.warn.preview').show();
+            });
+        });
+        // POST:
+        $('#article-post').on('click', function () { 
+            $('.message').hide();
+            $('#article-post').val('Working...');
+            var article_url = $('#article-url').val();
+            var title = $('#article-title').val();
+            var description = $('#article-description').val();
+            var image = $('#image-preview img').attr('src');
+            var post_as = $('#post-as').val();
+
+            var filter_tags = [];
+            if(typeof window.feedArticleFilterTags !== 'undefined' && window.feedArticleFilterTags.length) {
+                window.feedArticleFilterTags.each(function(filter_tag) {
+                    filter_tags.push(filter_tag.id);
+                });
+            }
+
+            $.ajax({
+                url: endpointValue+'feed/article',
+                method: 'POST',
+                headers: { "Authorization": "Bearer "+JWT_TOKEN },
+                data: { 
+                    about_type: 8, // AdminPost
+                    privacy_mode: 0,
+                    url: article_url,
+                    title: title,
+                    description: description,
+                    image: image,
+                    post_as: post_as,
+                    filter_tags: filter_tags,
+                }
+            }).done(function(res) {
+                $('#article-post').val('Post');
+                $('.message.info.main').show();
+                $('#preview-fieldset').attr("disabled", "disabled");
+                $('#article-title').val('');
+                $('#article-description').val('');
+                $('#image-preview').html('(No image)');
+            }).fail(function(res) {
+                console.log(res);
+                var message = 'Error: ';
+                if(res.status == 400)
+                    res.responseJSON.each(function(value){ message += "<br>- "+value; });
+                else 
+                    message += res.statusText;
+                $('#article-post').val('Post');
+                $('.message.warn.post .wrap').html(message);
+                $('.message.warn.post').show();
+            });            
+        });
+        /***** End of Admin Post Article *****/
+
+        // Resize iframes to the size of its contents
+        //if (typeof iFrameResize !== 'undefined' && $.isFunction(iFrameResize)) {
+        //    $('.iframe-js').iFrameResize();
+        //}
+
+//      Preview image
+        $("#upload-image-btn").change(function () {
+            readURL(this);
+        });
+
+//      Radio button check
+        var checkedradio = $("input[name='color']:checked");
+        (checkedradio).parent().addClass('active');
+        lightbox();
+        messageAnimation();
+        smartFooter();
+        //showFeed();
+        eventBackstretch();
+        salesForm();
+        TooltipHandler.run($(window).width());
+
+        $('.close-ad').on('click', function () {
+            $(this).parent().parent().remove();
+        });
+        if ($('.pop-up-ad-outer').find('.adform-adbox').length < 1) {
+            //$('.pop-up-ad-outer').remove();
+        }
+
+
+        $('.mobile-close-sidebar').on('click', function () {
+            $('#mobile-sidebar').removeClass('open');
+            $('.viewport-inner').removeClass('offset');
+        });
+
+        $('.sidebar-button').on('click', function (e) {
+            var windowWidth = $(window).width();
+            if (windowWidth < 751) {
+                e.preventDefault();
+                $('#mobile-sidebar').toggleClass('open');
+                $('.viewport-inner').toggleClass('offset');
+            }
+        });
+
+
+        $('.open-mail').on('click', function () {
+            $('.mail-register').toggleClass('mail-register-open');
+        });
+
+
+        $('.show-title').mouseover(function () {
+            var titleString = $(this).attr("title");
+            $(".menu-text").html("<p>" + titleString + "</p>");
+        });
+
+        $('.show-title').mouseleave(function () {
+            var titleString = '';
+            $(".menu-text").html("<p>" + titleString + "</p>");
+        });
+
+        $('.dropdown-toggle').dropdown();
+    });
+
+    // Uused with this line (Kohana setup):
+    // $element_check = $$$VAR$;     /***** @DELETE THIS TEST CODE LINE *****/     echo '<fieldset class="pre_toggle" style="border: 2px dashed #FF0000; background-color: #F0F0F0; margin:12px; padding: 12px; font: normal 14px Arial;"><legend style="font-weight: bold; cursor: pointer;"><span class="pre_toggle_all">Toggle All</span> - <span style="font-weight: normal;">Type:</span> ' . gettype($element_check) . '<span style="font-weight: normal;"></span></legend><pre style="font-size: 12px;">'; print_r($element_check); echo '</pre></fieldset>';
+    // $END$
+    $(".pre_toggle legend").on('click', function (e) {
+
+        var element = $(this),
+            target = $(e.target),
+            container = element.parent(),
+            elements = false;
+
+        // mass hide/show selector based on what current pre is visible or not
+        if (target.hasClass('pre_toggle_all')) {
+            elements = $(".pre_toggle").parent().find('pre');
+
+            if (container.find('pre').is(':visible')) {
+                elements.hide();
+            }
+            else {
+                elements.show();
+            }
+        }
+        else {
+            elements = container.find("pre");
+            elements.toggle();
+        }
+    });
+
+
+    $('.form-steps-second .input-group').on("click", function () {
+        var input = $(this).find('input');
+        $(input).focus();
+    });
+
+    $('.single-song-wrapper').each(function () {
+        var hasVoted = $(this).find('.vote-container').data('has-voted');
+        if (hasVoted == 0) {
+            $(this).find('.has-not-voted-container').show();
+        } else {
+            $(this).find('.has-voted-container').show();
+        }
+    });
+
+    $('.single-song-wrapper .vote').click(function (e) {
+        e.preventDefault();
+        var that = this;
+        var choiceID = $(e.currentTarget).data('poll-choice-id');
+        var pollID = $(e.currentTarget).data('poll-id');
+        var votes = $(e.currentTarget).closest('.single-song-wrapper').find('.vote-text .vote-count');
+        $.ajax({
+            url: '/poll/vote_callback',
+            method: 'POST',
+            data: {vote: {poll_id: pollID, choice_id: choiceID}}
+        }).done(function (res) {
+
+            if (res == 0) {
+                var messageText = $("input[data-response-type='has_voted_max_times']").val();
+                $('.message-optional-error').find('.wrap').text(messageText);
+                optionalMessageAnimation('.message-optional-error');
+            }
+
+            if (res == 1) {
+                var messageText = $("input[data-response-type='has_voted']").val();
+                $('.message-optional-error').find('.wrap').text(messageText);
+                optionalMessageAnimation('.message-optional-error');
+            }
+
+            if (res == 2) {
+                var messageText = $("input[data-response-type='success']").val();
+                $('.message-optional-success').find('.wrap').text(messageText);
+                optionalMessageAnimation('.message-optional-success');
+                $(votes).html(parseInt($(votes).text()) + 1);
+                $(e.currentTarget).closest('.single-song-wrapper').find('.has-not-voted-container').hide();
+                $(e.currentTarget).closest('.single-song-wrapper').find('.has-voted-container').show();
+            }
+
+        }).fail(function () {
+            var messageText = $("input[data-response-type='error']").val();
+            $('.message-optional-error').find('.wrap').text(messageText);
+            optionalMessageAnimation('.message-optional-error');
+        });
+    });
+
+
+    $('.sales-schools input[name="note"]').keypress(function (e) {
+        if (e.which == 13) {
+            location.reload();
+        }
+    });
+
+
+    // ***** BADGE SUBMIT ***** //
+    $('#badge-ajax').on('change', function (e) {
+
+        $.ajax({
+            method: 'post',
+            url: '/profile/badge_callback',
+            data: {submit: $("#badge-ajax option:selected").val()}
+        }).done(function (res) {
+            console.log('runs..');
+            console.log(res);
+        }).fail(function (res) {
+            console.log('failed!!');
+            console.log(res);
+        });
+
+        $(".badge-box").addClass("invisible");
+
+    });
+
+
+    // ***** BADGE SKIP ***** //
+    $('#additionals-badge-skip').on('click', function (e) {
+
+        $.ajax({
+            method: 'post',
+            url: '/profile/badge_skip_callback',
+            data: {}
+        }).done(function (res) {
+            console.log('runs..');
+            console.log(res);
+        }).fail(function (res) {
+            console.log('failed!!');
+            console.log(res);
+        });
+
+        $(".badge-box").addClass("invisible");
+
+    });
+
+
+    // ***** INSTAGRAM SKIP ***** //
+    $('#additionals-instagram-skip').on('click', function (e) {
+
+        $.ajax({
+            method: 'post',
+            url: '/profile/instagram_skip_callback',
+            data: {}
+        }).done(function (res) {
+            console.log('runs..');
+            console.log(res);
+        }).fail(function (res) {
+            console.log('failed!!');
+            console.log(res);
+        });
+
+        $(".instagram-box").addClass("invisible");
+
+    });
+
+
+    // ***** ADDRESS WASH ***** //
+
+    var modal = $('.address-wash-modal');
+    modal.modal({
+        keyboard: false,
+        show: true,
+        backdrop: 'static'
+    });
+
+    // update button
+    $('.address-wash-modal .address-wash-update').on('click', function (event) {
+        event.preventDefault();
+        var form = $('.address-wash-modal__form');
+        washArray['method'] = 'update';
+
+        $.ajax({
+            method: 'post',
+            url: '/profile/address_wash_callback',
+            data: {submit: washArray}
+        }).done(function (res) {
+            console.log('runs..');
+            console.log(res);
+        }).fail(function (res) {
+            console.log('failed!!');
+            console.log(res);
+        });
+
+        modal.modal('hide');
+        window.location = '/profile/cacheflush_and_redir';
+    });
+
+    // abort button
+    $('.address-wash-modal .address-wash-abort').on('click', function (event) {
+        event.preventDefault();
+        var form = $('.address-wash-modal__form');
+        washArray['method'] = 'abort';
+
+        $.ajax({
+            method: 'post',
+            url: '/profile/address_wash_callback',
+            data: {submit: washArray}
+        }).done(function (res) {
+            console.log('runs..');
+            console.log(res);
+        }).fail(function (res) {
+            console.log('failed!!');
+            console.log(res);
+        });
+
+        modal.modal('hide');
+        window.location = '/profile/cacheflush_and_redir';
+    });
+
+    // edit button
+    $('.address-wash-modal .address-wash-edit').on('click', function (event) {
+        event.preventDefault();
+        var form = $('.address-wash-modal__form');
+        washArray['method'] = 'edit';
+
+        $.ajax({
+            method: 'post',
+            url: '/profile/address_wash_callback',
+            data: {submit: washArray}
+        }).done(function (res) {
+            console.log('runs..');
+            console.log(res);
+        }).fail(function (res) {
+            console.log('failed!!');
+            console.log(res);
+        });
+
+        modal.modal('hide');
+        window.location = '/profile/cache_flush_and_redir_profile_edit';
+    });
+
+
+    // ***** EDUCATION QA ***** //
+
+    var modal = $('.education-survey-modal');
+    modal.modal({
+        keyboard: false,
+        show: true,
+        backdrop: 'static'
+    });
+    window.currentEducationSurveySectionIndex = 0;
+    $('.education-survey-modal .skip').on('click', function (event) {
+        event.preventDefault();
+
+        $.ajax({
+            method: 'post',
+            url: '/profile/education_qa_callback',
+            data: {decline: true}
+        }).done(function (res) {
+            console.log('runs..');
+            console.log(res);
+        }).fail(function (res) {
+            console.log('failed!!');
+            console.log(res);
+        });
+
+        modal.modal('hide');
+        window.location = '/profile/cacheflush_and_redir';
+    });
+    $('.education-survey-modal button[type=submit]').on('click', function (event) {
+        event.preventDefault();
+        var form = $('.education-survey-modal__form');
+        var section = form.find('table[section-id=' + window.currentEducationSurveySectionIndex + '], div[section-id=' + window.currentEducationSurveySectionIndex + ']');
+        var valid = true;
+        var fields = section.find('input, textarea');
+
+        if ((window.currentEducationSurveySectionIndex >= 0) && (window.currentEducationSurveySectionIndex <= 3)) {
+            modal.find('.education-survey-modal__indicator-text').removeClass('hide');
+        } else {
+            modal.find('.education-survey-modal__indicator-text').addClass('hide');
+            // modal.find('.education-survey-modal__indicator-text').show();
+        }
+
+        fields.each(function () {
+            $(this).validate({
+                errorTemplate: '<div class="error"><p><i class="fa fa-warning"></i> {output}</p></div>',
+                errorMessages: {
+                    required: 'Et felt er påkrevd.',
+                    numeric: 'Must be numeric',
+                    digits: 'Must be 2 characters',
+                    minlength: 'Must be atleast  % characters',
+                    maxlength: 'Can be max  % characters'
+                },
+                onError: function () {
+                    valid = false;
+                }
+            });
+        });
+
+        if (!valid) return;
+        $('.education-survey-modal__indicator-number').text(++window.currentEducationSurveySectionIndex);
+
+        if (window.currentEducationSurveySectionIndex == (form.find('table[section-id], div[section-id]').length - 1)) {
+            modal.find('.education-survey-modal__indicator-text').hide();
+            modal.find('button.skip').addClass('hide');
+            modal.find('button.next').addClass('hide');
+            modal.find('button.close-modal').removeClass('hide');
+
+            $.ajax({
+                method: 'post',
+                url: '/profile/education_qa_callback',
+                data: {submit: form.find('input, textarea').serialize()}
+            }).done(function (res) {
+                console.log('runs..');
+                console.log(res);
+            }).fail(function (res) {
+                console.log('failed!!');
+                console.log(res);
+            });
+        }
+
+        $('.education-survey-modal span#current-section-id').text(window.currentEducationSurveySectionIndex);
+        section.addClass('hide');
+        form.find('table[section-id=' + (window.currentEducationSurveySectionIndex) + '], div[section-id=' + (window.currentEducationSurveySectionIndex) + ']').removeClass('hide');
+    });
+
+
+    window.Russ = {
+        Profile: {},
+        SelectableAddresses: {},
+        CheckPostalCode: function (postalCode) {
+            if (!postalCode) {
+                return;
+            }
+
+            $.ajax({url: '/postal_city/postal_code/' + postalCode, method: 'GET'}).done(function (res) {
+                if (!res) {
+                    $('span#postal_city').text('Ugyldig postnummer');
+
+                    return;
+                }
+
+                $('span#postal_city').text(res);
+            });
+        }
+    };
+
+    Russ.Profile.hasChangedBio = false;
+    $('input[name="first_name"], input[name="last_name"], input[name="address"], input[name="postal_code"], select[name="birthday[0]"], select[name="birthday[1]"], select[name="birthday[2]"]').change(function () {
+        Russ.Profile.hasChangedBio = true;
+    });
+
+    $('.select2-custom #address-helper').on('select2:select', function (e) {
+        Russ.Profile.hasChangedBio = true;
+        var selectedAddressNumber = $('.select2-custom #address-helper option:selected').val();
+
+        $.each(Russ.SelectableAddresses, function (index, address) {
+            if (address.address_number == selectedAddressNumber) {
+                // populate fields with address data
+                $('input#address_number').val(selectedAddressNumber);
+                $('input#address').val(address.street_name + ' ' + address.house_number + address.letter);
+                $('input#postal_code').val(address.postal_code);
+
+                window.Russ.CheckPostalCode(address.postal_code);
+            }
+        });
+    });
+
+    var postalCode = $('input#postal_code');
+
+    postalCode.on('change keyup', function () {
+        window.Russ.CheckPostalCode($(this).val());
+    });
+
+    var postalCodeFilledBy1881  = typeof filledBy1881 !== 'undefined' && filledBy1881.hasOwnProperty('postal_code') && filledBy1881.postal_code,
+        addressFilledBy1881     = typeof filledBy1881 !== 'undefined' && filledBy1881.hasOwnProperty('address') && filledBy1881.address,
+        hasTypedAddress         = $('#has-typed-address');
+
+    if (postalCodeFilledBy1881) {
+        postalCode.trigger('change');
+    }
+
+    if (addressFilledBy1881 || postalCodeFilledBy1881) {
+        hasTypedAddress.removeClass('hide');
+    }
+
+    $('#save-profile').on('click', function (e) {
+        e.preventDefault();
+        $(this).parents('form').append('<input type="hidden" name="save_profile" value="1">');
+
+        if (!Russ.Profile.hasChangedBio) {
+            $(this).parents('form').submit();
+            return false;
+        }
+
+        var that = this;
+
+        swal({
+                title: "Er du sikker?",
+                text: "Du er i ferd med å endre dine personalia. Dersom du allerede har en godkjent kreditt i nettbutikken må du legge inn personnummer på nytt og bekrefte igjen der nå. Hvis du har konto i nettbutikkene, kan det ta opptil 2 minutter før endringene blir synlige der.",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Ja, oppdater!",
+                cancelButtonText: "Nei, ikke nå!",
+                closeOnConfirm: true,
+                closeOnCancel: false
+            },
+            function (isConfirm) {
+                if (!isConfirm) {
+                    swal("Kansellert", "Dine personalia er uforandret.", "error");
+                } else {
+                    $(that).parents('form').submit();
+                }
+            }
+        );
+    });
+
+    var selectModule = $('.select2-custom #address-helper');
+
+    if (selectModule.length > 0) {
+        selectModule.on('select2:open', function () {
+            if (hasTypedAddress.hasClass('hide')) {
+                hasTypedAddress.removeClass('hide');
+            }
+        });
+
+        selectModule.select2({
+            theme: 'bootstrap',
+            ajax: {
+                url: "https://address-api.russ.no/addresses",
+                dataType: 'json',
+                delay: 500,
+                data: function (params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, params) {
+                    // parse the results into the format expected by Select2
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data, except to indicate that infinite
+                    // scrolling can be used
+                    params.page = params.page || 1;
+
+                    Russ.SelectableAddresses = data;
+
+                    return {
+                        results: $.map(data, function (item) {
+                            return {
+                                text: item.street_name + ' ' + item.house_number + item.letter + ', ' + item.postal_code + ' ' + item.postal,
+                                id: item.address_number,
+                            };
+                        }),
+                        pagination: {
+                            more: (params.page * 30) < data.total_count
+                        }
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) {
+                return markup;
+            }, // let our custom formatter work
+            minimumInputLength: 3,
+            language: {
+                inputTooShort: function (args) {
+                    // args.minimum is the minimum required length
+                    // args.input is the user-typed text
+                    return "Skriv tre bokstaver eller mer.";
+                },
+                inputTooLong: function (args) {
+                    // args.maximum is the maximum allowed length
+                    // args.input is the user-typed text
+                    return "You typed too much";
+                },
+                errorLoading: function () {
+                    return "Fant ingen resultater. Angi adresse nedanfor.";
+                },
+                loadingMore: function () {
+                    return "Laster resultater..";
+                },
+                noResults: function () {
+                    return "Fant ingen resultater. Angi adresse nedanfor.";
+                },
+                searching: function () {
+                    return "Søker..";
+                },
+                maximumSelected: function (args) {
+                    // args.maximum is the maximum number of items the user may select
+                    return "Fant ingen resultater.";
+                }
+            }
+        });
+    }
+
+
+    // ***** SMS Schedule *****
+    $('button.delete-sms-schedule').on('click', function(e){
+        e.preventDefault();
+
+        var button      = $(this),
+            tr          = button.closest('tr'),
+            schedule_id = tr && parseInt(tr.attr('data-id'));
+
+        if (schedule_id > 0 && confirm('Slett SMS melding?'))
+        {
+            $.ajax({
+                url      : '/massmsg/delete_sms_schedule',
+                type     : 'POST',
+                data     : { schedule_id : schedule_id },
+                dataType : 'json',
+                success  : function(data)
+                {
+                    window.location.reload();
+                }
+            });
+        }
+    });
+
+    var smsMsg              = $('#sms-msg-container'),
+        smsMsgFound         = smsMsg.length === 1,
+        smsMsgForm          = smsMsgFound && smsMsg.find('form'),
+        formFound           = smsMsgForm.length === 1,
+        smsSchoolSelect     = formFound && smsMsgForm.find('select#schoolSelect'),
+        smsCountySelect     = formFound && smsMsgForm.find('select#countiesSelect'),
+        smsSeasonSelect     = formFound && smsMsgForm.find('select#season'),
+        smsTypeSelect       = formFound && smsMsgForm.find('select#smsType'),
+        smsFromShop         = formFound && smsMsgForm.find('select#fromShop'),
+        smsFromShopGrp      = smsFromShop.length === 1 && smsFromShop.closest('.input-group'),
+        numSmsRecipients    = $('#numSmsRecipients');
+
+    if (smsSchoolSelect.length > 0) { smsSchoolSelect.on('change', getSmsRecipientsCount); }
+    if (smsCountySelect.length > 0) { smsCountySelect.on('change', getSmsRecipientsCount); }
+    if (smsSeasonSelect.length > 0) { smsSeasonSelect.on('change', getSmsRecipientsCount); }
+    if (smsTypeSelect.length > 0)   { smsTypeSelect.on ('change', changeSmsList); }
+
+    // in sms_msg_form: russ board or season
+    if (smsSchoolSelect.length === 0 && smsCountySelect.length === 0
+        && smsSeasonSelect.length > 0
+    ) {
+        smsSeasonSelect.trigger('change');
+    }
+
+
+    function getSmsRecipientsCount(e) {
+        var me          = $(this),
+            form        = me.closest('form'),
+            action      = form.attr('action'),
+            smsSeason   = parseInt(smsSeasonSelect.val()),
+            schoolID    = smsSchoolSelect && smsSchoolSelect.val(),
+            countyID    = smsCountySelect && smsCountySelect.val(),
+            smsType     = smsTypeSelect && smsTypeSelect.val(),
+            smsList     = smsType === 'info' ? 'info' : smsFromShop.val();
+
+        numSmsRecipients.html('Sjekker ...');
+
+        $.ajax({
+            url      : '/massmsg/get_recipients_count',
+            type     : 'POST',
+            data     : {
+                action:     action,
+                season:     smsSeason,
+                schoolID:   schoolID,
+                countyID:   countyID,
+                smsType:    smsType,
+                smsList:    smsList
+            },
+            dataType : 'json',
+            success  : function(response)
+            {
+                numSmsRecipients.html(response.success ? response.count : '');
+            }
+        })
+    }
+
+    function changeSmsList(e) {
+        var me = $(this);
+
+        switch (me.val())
+        {
+            case 'info': smsFromShopGrp.hide(); break;
+            case 'ads':  smsFromShopGrp.show(); break;
+        }
+    }
+
+
+})(jQuery);
