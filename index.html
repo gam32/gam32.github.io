@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!-- saved from url=(0056)http://klasserom.net/190/elev19014/AllanNotes/index.html -->
+<html lang="no" wcxlastxpos="1365" wcxlastypos="290" wcxlasttime="1536584911485" wcxdocid="1536584870553" wcxlastmousedownxpos="570" wcxlastmousedownypos="278" wcxlastmouseupxpos="570"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                 
+                 <title>Erlend</title>
+                 <link rel="stylesheet" href="index.css">
+</head>
+<body background-color="gray">
+        <h1>AllanNotes</h1>
+<center>
+<style>
+#calc{width:300px;height:250px;}
+#btn{width:100%;height:40px;font-size:20px;}
+{position: fixed;}
+</style>
+<form name="calc">
+<table id="calc" border="2">
+<tbody><tr>
+<td colspan="5"><input id="btn" name="display" onkeypress="return event.charCode &gt;= 48 &amp;&amp; event.charCode &lt;= 57" type="text"></td>
+<td style="display:none"><input name="M" type="number"></td>
+</tr>
+<tr>
+<td><input id="btn" type="button" value="MC" onclick="calc.M.value=&#39;&#39;"></td>
+<td><input id="btn" type="button" value="0" onclick="calc.display.value+=&#39;0&#39;"></td>
+<td><input id="btn" type="button" value="1" onclick="calc.display.value+=&#39;1&#39;"></td>
+<td><input id="btn" type="button" value="2" onclick="calc.display.value+=&#39;2&#39;"></td>
+<td><input id="btn" type="button" value="+" onclick="calc.display.value+=&#39;+&#39;"></td>
+</tr>
+<tr>
+<td><input id="btn" type="button" value="MS" onclick="calc.M.value=calc.display.value"></td>
+<td><input id="btn" type="button" value="3" onclick="calc.display.value+=&#39;3&#39;"></td>
+<td><input id="btn" type="button" value="4" onclick="calc.display.value+=&#39;4&#39;"></td>
+<td><input id="btn" type="button" value="5" onclick="calc.display.value+=&#39;5&#39;"></td>
+<td><input id="btn" type="button" value="-" onclick="calc.display.value+=&#39;-&#39;"></td>
+</tr>
+<tr>
+<td><input id="btn" type="button" value="MR" onclick="calc.display.value=calc.M.value"></td>
+<td><input id="btn" type="button" value="6" onclick="calc.display.value+=&#39;6&#39;"></td>
+<td><input id="btn" type="button" value="7" onclick="calc.display.value+=&#39;7&#39;"></td>
+<td><input id="btn" type="button" value="8" onclick="calc.display.value+=&#39;8&#39;"></td>
+<td><input id="btn" type="button" value="x" onclick="calc.display.value+=&#39;*&#39;"></td>
+</tr>
+<tr>
+<td><input id="btn" type="button" value="M+" onclick="calc.M.value=(Number(calc.M.value))+(Number(calc.display.value))"></td>
+<td><input id="btn" type="button" value="9" onclick="calc.display.value+=&#39;9&#39;"></td>
+<td><input id="btn" type="button" value="±" onclick="calc.display.value=(calc.display.value==Math.abs(calc.display.value)?-(calc.display.value):Math.abs(calc.display.value))">
+
+</td>
+<td><input id="btn" type="button" value="=" onclick="calc.display.value=eval(calc.display.value)"></td>
+<td><input id="btn" type="button" value="/" onclick="calc.display.value+=&#39;/&#39;"></td>
+</tr>
+<tr>
+<td><input id="btn" type="button" value="1/x" onclick="calc.display.value=1/calc.display.value"></td>
+<td><input id="btn" type="button" value="." onclick="calc.display.value+=&#39;.&#39;"></td>
+<td><input id="btn" type="button" value="x2" onclick="calc.display.value=Math.pow(calc.display.value,2)"></td>
+<td><input id="btn" type="button" value="√" onclick="calc.display.value=Math.sqrt(calc.display.value)"></td>
+<td><input id="btn" type="button" value="C" onclick="calc.display.value=&#39;&#39;"></td>
+</tr>
+</tbody></table>
+</form>
+<br>
+<textarea id="textArea" rows="50" cols="150">                Noter her
+             </textarea>
+</center>
+
+</body></html>
